@@ -36,7 +36,7 @@
         type="submit"
         class="block w-full bg-indigo-600 mt-4 py-2 rounded-2xl text-white font-semibold mb-2"
       >
-        Login
+      <app-loader *ngIf="isLoading"></app-loader>  Login
       </button>
       <!-- Already have an account? -->
       <div class="text-center">
@@ -45,7 +45,7 @@
           <a
             [routerLink]="['/register']"
             class="font-semibold underline text-blue-500 dark:text-blue-500 align-baseline hover:text-blue-800"
-            ><app-loader *ngIf="isLoading"></app-loader>  Signup</a
+            >Signup</a
           >
         </p>
       </div>

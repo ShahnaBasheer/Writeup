@@ -43,8 +43,7 @@
       <!-- Inicio -->
       <a
         *ngFor="let item of menues"
-        [routerLink]="item.path"
-        [routerLinkActive]="'router-link-active'"
+        (click)="onMenuClick(item)"
         class="relative px-4 py-3 flex items-center space-x-4 rounded-lg text-gray-500 bg-gradient-to-r hover:from-cyan-600 hover:to-sky-400 hover:text-white hover:shadow-lg transition duration-300 ease-in-out"
       >
         <i [classList]="item.icon"></i>

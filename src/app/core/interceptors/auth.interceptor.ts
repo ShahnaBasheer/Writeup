@@ -7,16 +7,16 @@ import {
 import { Observable, tap } from 'rxjs';
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { environment } from '../../../environments/environment';
 import { TokenService } from '../services/token.service';
+import { AuthService } from '../services/auth.service';
 
 export const AuthInterceptor: HttpInterceptorFn = (
   req: HttpRequest<any>,
   next: HttpHandlerFn
 ): Observable<HttpEvent<any>> => {
-  const store = inject(Store);
   const tokenService = inject(TokenService);
+  const authservice = inject(AuthService);
 
   let tokenKey!: string ;
   const postRequests = new Set([
@@ -55,7 +55,6 @@ export const AuthInterceptor: HttpInterceptorFn = (
           const data = event.body?.data;
           if (data && !path.includes('/logout')) {
             let newToken: string = data.token;
-            let user = data?.user;
 
             if (newToken) {
               tokenService.setToken(tokenKey, newToken);
@@ -63,19 +62,10 @@ export const AuthInterceptor: HttpInterceptorFn = (
               newToken = token;
             }
 
-            console.log('auth interceptor triggering')
+            tokenService.setProperty('userInfo', JSON.stringify(data?.user))
 
-            if (user) {
-              if (user.role === 'admin') {
+            console.log('auth interceptor triggering', event.body)
 
-              } else if (user.role === 'user') {
-
-              }
-            } else {
-              if(path.startsWith('/api')){
-
-              }
-            }
           }
         }
       })

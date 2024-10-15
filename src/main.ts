@@ -3,9 +3,10 @@ import { appConfig } from './app/app.config';
 import { AppComponent } from './app/app.component';
 import { mergeApplicationConfig } from '@angular/core';
 import { authConfig } from './app/features/auth/auth.config';
+import { articleConfig } from './app/features/articles/articles.config';
 
 
-const mergedConfig = mergeApplicationConfig(appConfig, authConfig);
+const mergedConfig = mergeApplicationConfig(appConfig, authConfig, articleConfig);
 
 
 bootstrapApplication(AppComponent, mergedConfig)

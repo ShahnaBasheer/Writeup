@@ -2,20 +2,16 @@ import { HttpEvent, HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpErrorResp
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { inject } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { TokenService } from '../services/token.service';
-
-
-
+import { environment } from '../../../environments/environment';
 
 
 export const ErrorInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandlerFn): Observable<HttpEvent<any>> => {
-    const store = inject(Store);
     const router = inject(Router);
     const toastr = inject(ToastrService);
-    const jwtTokenService = inject(TokenService)
+    const tokenService = inject(TokenService);
     const path = (new URL(req.url)).pathname;
 
 
@@ -25,7 +21,6 @@ export const ErrorInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next:
 
             if (error.error instanceof ErrorEvent) {
                 // Client-side errors
-                // errorMessage = `Error: ${error.error.message}`;
                 console.log('client side error', error.error.message);
 
             } else {
@@ -39,10 +34,10 @@ export const ErrorInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next:
                       }
                     }
                 }  else if(path.startsWith('/api/')){
-                    if(error.status === 401 && req.headers.has('Authorization')){
-                      console.log("401 user authorization");
-                    } else if(error.status === 401) {
-                      router.navigate(['/login'], {replaceUrl: true })
+                    if(error.status === 401){
+                      console.log("401 error ");
+                      tokenService.removeToken(environment.us_accessKey);
+                      router.navigate(['/login'], { replaceUrl: true })
                     } else if(error.status === 403){
                       toastr.error("User account is Blocked!", 'error');
                     }

@@ -7,6 +7,7 @@ import { confirmPasswordValidator, isFieldInvalidator } from '../../../../core/v
 import { ToastrService } from 'ngx-toastr';
 import { LoaderComponent } from "../../../../shared/components/loader/loader.component";
 import { SideBannerComponent } from "../../../../shared/components/side-banner/side-banner.component";
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -27,6 +28,7 @@ export class RegisterComponent {
     private fb: FormBuilder,
     private router: Router,
     private toastr: ToastrService,
+    private authservice: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -57,25 +59,25 @@ export class RegisterComponent {
     if (this.registrationForm.valid) {
         this.isLoading = true;
         this.isEnabled = false;
-        // this.customerAuthService.customerRegistration(this.registrationForm.value).subscribe({
-        //   next: (response: any) => {
-        //       this.toastr.success('Verification Code has been sent Successfully!');
-        //       this.router.navigate(['/otpverification']);
-        //   },
-        //   error: (error: any) => {
-        //     this.isLoading = false;
-        //     this.isEnabled = false;
-        //     if (error.status === 409) {
-        //       this.toastr.warning('You have already signed up. Please log in!');
-        //       this.router.navigate(['/login']);
-        //     } else {
-        //       this.toastr.error(error.error?.message || "An error occurred during registration")
-        //     }
-        //   },
-        //   complete: () => {
-        //     this.isLoading = false;
-        //   },
-        // });
+        this.authservice.register(this.registrationForm.value).subscribe({
+          next: (res: any) => {
+              this.toastr.success(res.message);
+              this.router.navigate(['/otp-verification']);
+          },
+          error: (error: any) => {
+            this.isLoading = false;
+            this.isEnabled = false;
+            if (error.status === 409) {
+              this.toastr.warning(error.error?.message ?? error.message);
+              this.router.navigate(['/login']);
+            } else {
+              this.toastr.error(error.error?.message || "An error occurred during registration")
+            }
+          },
+          complete: () => {
+            this.isLoading = false;
+          },
+        });
     } else {
       this.registrationForm.markAllAsTouched();
     }

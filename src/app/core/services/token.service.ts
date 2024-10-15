@@ -26,4 +26,9 @@ export class TokenService {
       return !!token;
     }
 
+    setProperty(name: string, data: any){
+      const dataString = JSON.stringify(data) ?? '';
+      localStorage.setItem(name, dataString);
+    }
+
 }

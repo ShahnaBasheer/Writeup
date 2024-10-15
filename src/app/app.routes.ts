@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+import { Routes, CanActivateFn } from '@angular/router';
 import { LoginComponent } from './features/auth/components/login/login.component';
 import { RegisterComponent } from './features/auth/components/register/register.component';
 import { NotFoundComponent } from './shared/components/not-found/not-found.component';
@@ -23,11 +23,11 @@ export const routes: Routes = [
     { path: 'create', component: CreateArticleComponent },
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   ] },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
-  { path: 'signup', component: RegisterComponent },
-  { path: 'interested/topics', component: InterestedTopicsComponent },
-  { path: 'otp-verification', component: OtpVerificationComponent},
+  { path: 'login', component: LoginComponent, canActivate: [AuthGuard] },
+  { path: 'register', component: RegisterComponent, canActivate: [AuthGuard] },
+  { path: 'signup', component: RegisterComponent, canActivate: [AuthGuard] },
+  { path: 'interested/topics', component: InterestedTopicsComponent, canActivate: [AuthGuard] },
+  { path: 'otp-verification', component: OtpVerificationComponent, canActivate: [AuthGuard]},
   { path: 'not-found', component: NotFoundComponent },
   { path: '**', redirectTo: 'not-found' },
 ];

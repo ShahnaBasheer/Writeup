@@ -54,8 +54,8 @@ export class CreateArticleComponent {
 
   ngOnInit(): void {
      this.articleForm = this.fb.group({
-        title: ['', [Validators.required, Validators.minLength(5)]],
-        category: ['', [Validators.required, Validators.minLength(5)]],
+        title: ['', [Validators.required, Validators.minLength(3)]],
+        category: ['', [Validators.required, Validators.minLength(3)]],
         content: ['', [Validators.required, Validators.minLength(100)]],
         image:  [null, [Validators.required]],
      })

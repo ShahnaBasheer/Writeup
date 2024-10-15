@@ -6,16 +6,23 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { NavigationStart, Router, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
 import { isFieldInvalidator } from '../../../../core/validators/forms.validator';
+import { AuthService } from '../../../../core/services/auth.service';
+import { LoaderComponent } from "../../../../shared/components/loader/loader.component";
+import { Subscription } from 'rxjs';
+import { TokenService } from '../../../../core/services/token.service';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-otp-verification',
   standalone: true,
   imports: [SideBannerComponent, ReactiveFormsModule,
-    CommonModule, RouterModule],
+    CommonModule, RouterModule,
+    LoaderComponent
+  ],
   templateUrl: './otp-verification.component.html',
   styleUrl: './otp-verification.component.css',
 })
@@ -26,14 +33,17 @@ export class OtpVerificationComponent {
   countdownIntervalId!: any;
   countdown!: string;
   isLoading: boolean = false;
-  isEnabled: boolean = false;
-  isTimerEnabled: boolean = false;
+  isEnabled: boolean = true;
+  isTimerEnabled: boolean = true;
   resendOtpCount: number = 3;
+  private routerSubscription!: Subscription;
 
   constructor(
     private router: Router,
     private fb: FormBuilder,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private authservice: AuthService,
+    private tokenservice: TokenService
   ) {
     this.otpVerificationForm = this.fb.group({
       otp: [
@@ -41,13 +51,24 @@ export class OtpVerificationComponent {
         [Validators.required, Validators.minLength(6), Validators.maxLength(6)],
       ],
     });
+
+    this.routerSubscription = this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        // Check if the user is navigating away from the OTP verification page
+        if (event.url !== '/otp-verification') {
+          // Remove the verification token
+          this.tokenservice.removeToken(environment.verifyemail);
+        }
+      }
+    });
   }
 
   ngOnInit(): void {
-    // this.authService.email$.subscribe(email => {
-    //   this.email = email ;
-    //   this.startCountdown();
-    // });
+    this.authservice.email$.subscribe(email => {
+      this.email = email ;
+      this.startCountdown();
+    });
+
   }
 
   isFieldInvalid(fieldName: string): boolean {
@@ -55,24 +76,25 @@ export class OtpVerificationComponent {
   }
 
   onSubmit() {
+    console.log("clicked")
     if (this.otpVerificationForm.valid) {
-      // this.isLoading = true;
-      // this.isEnabled = false;
-      // this.authService.verifyOTP(this.email, this.otpVerificationForm.value.otp).subscribe({
-      //   next: (response) => {
-      //     this.toastr.success("Verified Otp Successfully!Please Login!", 'Success');
-      //     this.router.navigate(['/login']);
-      //   },
-      //   error: (error) => {
-      //     this.isLoading = false;
-      //     this.isEnabled = true;
-      //     this.toastr.error(error.error.message || 'An error occurred during OTP verification.', 'Failed');
-      //   },
-      //   complete: () => {
-      //     this.isLoading = false;
-      //     this.isEnabled = true;
-      //   },
-      // });
+      this.isLoading = true;
+      this.isEnabled = false;
+      this.authservice.verifyOTP(this.email, this.otpVerificationForm.value.otp).subscribe({
+        next: (res) => {
+          this.toastr.success(res.message);
+          this.router.navigate(['/login']);
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.isEnabled = true;
+          this.toastr.error(error.error?.message ?? 'Something went wrong!');
+        },
+        complete: () => {
+          this.isLoading = false;
+          this.isEnabled = true;
+        },
+      });
     } else {
       this.otpVerificationForm.markAllAsTouched();
     }
@@ -96,25 +118,23 @@ export class OtpVerificationComponent {
 
   onResendOTP(): void {
     this.isTimerEnabled = false;
-    // this.authService.resendOTP(this.email).subscribe({
-    //   next: (response: any) => {
-    //     this.resendOtpCount = parseInt(response?.data?.remainingLimit);
-    //     clearInterval(this.countdownIntervalId)
-    //     this.isTimerEnabled = true;
-    //     this.startCountdown();
-    //     if(response){
-    //       this.toastr.success("Resend  Otp Successfully!", 'Success');
-    //     }
-    //   },
-    //   error: (error: any) => {
-    //     if (error.status === 409) {
-    //       this.toastr.error("You have already signed up!", 'Failed');
-    //       this.router.navigate(['/login']);
-    //     } else {
-    //       console.log(error,"errors from signupcomponent")
-    //       this.toastr.error(error.error.message || 'An error occurred during registration', 'Failed');
-    //     }
-    //   }
-    // })
+    this.authservice.resendOTP(this.email).subscribe({
+      next: (res: any) => {
+        this.resendOtpCount = parseInt(res?.data?.remainingLimit);
+        clearInterval(this.countdownIntervalId)
+        this.isTimerEnabled = true;
+        this.startCountdown();
+        this.toastr.success(res.message);
+      },
+      error: (error: any) => {
+        if (error.status === 409) {
+          this.toastr.error("You have already signed up!", 'Failed');
+          this.router.navigate(['/login']);
+        } else {
+          console.log(error,"errors from signupcomponent")
+          this.toastr.error(error.error?.message ?? 'Something went wrong. Try later!');
+        }
+      }
+    })
   }
 }
