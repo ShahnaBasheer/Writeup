@@ -1,0 +1,107 @@
+<app-side-banner>
+  <div class="flex md:w-3/4 justify-center py-10 items-center bg-white">
+
+    <form class="w-6/12" [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+      <h1 class="text-gray-800 font-bold text-3xl my-1">Register Account</h1>
+      <p class="text-md text-blue-500 font-medium mb-7">Hello Again, Welcome Back!</p>
+
+      <div class="mb-3">
+        <div class="flex items-center border-2 py-2 px-3 rounded-2xl">
+          <i class="fa-solid fa-user text-gray-400"></i>
+          <input
+            class="pl-2 outline-none border-none"
+            type="text"
+            formControlName="fullName"
+            placeholder="Full name"
+          />
+        </div>
+        <p class="text-red-600 text-[.75rem] italic mt-1" *ngIf="isFieldInvalid('fullName')">
+          Please enter a valid full name!
+        </p>
+      </div>
+
+      <div class="mb-3">
+        <div class="flex items-center border-2 py-2 px-3 rounded-2xl">
+          <i class="fa-solid fa-briefcase text-gray-400"></i>
+          <input
+            class="pl-2 outline-none border-none"
+            type="text"
+            formControlName="work"
+            placeholder="Work"
+          />
+        </div>
+        <p class="text-red-600 text-[.75rem] italic mt-1" *ngIf="isFieldInvalid('work')">
+          Please enter your work!
+        </p>
+      </div>
+
+      <div class="mb-3">
+        <div class="flex items-center border-2 py-2 px-3 rounded-2xl">
+          <i class="fa-solid fa-envelope text-gray-400"></i>
+          <input
+            class="pl-2 outline-none border-none"
+            type="text"
+            formControlName="email"
+            placeholder="Email Address"
+          />
+        </div>
+        <p class="text-red-600 text-[.75rem] italic mt-1" *ngIf="isFieldInvalid('email')">
+          Please enter a valid email!
+        </p>
+      </div>
+
+      <div class="mb-3">
+        <div class="flex items-center border-2 py-2 px-3 rounded-2xl">
+          <i class="fa-solid fa-lock text-gray-400"></i>
+          <input
+            class="pl-2 outline-none border-none"
+            type="password"
+            formControlName="password"
+            placeholder="Password"
+          />
+        </div>
+        <p class="text-red-600 text-[.75rem] italic mt-1" *ngIf="isFieldInvalid('password')">
+          Please enter a valid password!
+        </p>
+      </div>
+
+      <div class="mb-3">
+        <div class="flex items-center border-2 py-2 px-3 rounded-2xl">
+          <i class="fa-solid fa-key text-gray-400"></i>
+          <input
+            class="pl-2 outline-none border-none"
+            type="password"
+            formControlName="confirmPassword"
+            placeholder="Confirm Password"
+          />
+        </div>
+        <p class="text-red-600 text-[.75rem] italic mt-1" *ngIf="isFieldInvalid('confirmPassword') && !isConfirmPasswordMismatch()">
+          Please enter a valid confirm password!
+        </p>
+        <p class="text-red-600 text-[.75rem] italic mt-1" *ngIf="isConfirmPasswordMismatch()">
+          Passwords do not match!
+        </p>
+      </div>
+
+      <button
+        type="submit"
+        class="block w-full bg-indigo-600 mt-4 py-2 rounded-2xl text-white font-semibold mb-2"
+      >
+        <app-loader *ngIf="isLoading"></app-loader> Register
+      </button>
+
+      <!-- Already have an account? -->
+      <div class="text-center">
+        <a
+          class="inline-block font-semibold text-sm text-blue-500 align-baseline hover:text-blue-800"
+          [routerLink]="['/login']"
+          routerLinkActive="router-link-active"
+        >
+          Already have an account? Login!
+        </a>
+      </div>
+    </form>
+
+  </div>
+
+</app-side-banner>

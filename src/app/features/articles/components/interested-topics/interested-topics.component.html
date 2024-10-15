@@ -1,0 +1,53 @@
+<app-side-banner>
+  <div class="flex md:w-3/4 justify-center py-10 items-center bg-white">
+    <form class="w-6/12" [formGroup]="topicsForm" (ngSubmit)="onSubmit()">
+      <h1 class="text-gray-800 font-bold text-3xl my-5">Personal Interests</h1>
+
+      <!-- Personal Interests -->
+      <div class="mb-3">
+        <label class="text-gray-800 block font-semibold my-4">Select your interests:</label>
+
+        <!-- Flex container for 2 columns with specific height -->
+        <div class="flex flex-wrap h-64"> <!-- Adjust height as needed -->
+          <!-- First Column -->
+          <div class="w-1/2 h-full pr-2">
+            <div *ngFor="let interest of interestsControls.slice(0, (interestsControls.length / 2)+1); let i = index"
+              class="flex items-center space-x-2 rounded p-2 hover:bg-gray-100 accent-teal-600">
+              <input type="checkbox" id="interest-{{interest.name}}" name="interests" [checked]="interest.selected"
+                (change)="onCheckboxChange($event, i)"
+                class="h-4 w-4 rounded border-gray-300 text-teal-600 shadow-sm focus:border-teal-300 focus:ring
+                focus:ring-teal-200 focus:ring-opacity-50 focus:ring-offset-0 disabled:cursor-not-allowed
+                disabled:text-gray-400" />
+              <label for="interest-{{interest.name}}" class="flex w-full space-x-2 text-sm"> {{ interest.name }} </label>
+            </div>
+          </div>
+
+          <!-- Second Column -->
+          <div class="w-1/2 h-full pl-2">
+            <div *ngFor="let interest of interestsControls.slice((interestsControls.length / 2)+1); let i = index"
+              class="flex items-center space-x-2 rounded p-2 hover:bg-gray-100 accent-teal-600">
+              <input type="checkbox" id="interest-{{interest.name}}" name="interests" [checked]="interest.selected"
+                (change)="onCheckboxChange($event, i)"
+                class="h-4 w-4 rounded border-gray-300 text-teal-600 shadow-sm focus:border-teal-300 focus:ring
+                focus:ring-teal-200 focus:ring-opacity-50 focus:ring-offset-0 disabled:cursor-not-allowed
+                disabled:text-gray-400" />
+              <label for="interest-{{interest.name}}" class="flex w-full space-x-2 text-sm"> {{ interest.name }} </label>
+            </div>
+          </div>
+        </div>
+
+        <p class="text-red-600 text-[.75rem] italic mt-1" *ngIf="isInterestInvalid()">
+          Please select at least one interest!
+        </p>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="block w-full bg-indigo-600 mt-4 py-2 rounded-2xl text-white font-semibold mb-2"
+      >
+        <app-loader *ngIf="isLoading"></app-loader> Choose Interests
+      </button>
+    </form>
+  </div>
+</app-side-banner>

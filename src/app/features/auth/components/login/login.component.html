@@ -1,0 +1,58 @@
+<app-side-banner>
+
+  <div class="flex md:w-3/4 justify-center py-10 items-center bg-white">
+    <form class="bg-white w-6/12" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <h1 class="text-gray-800 font-bold text-3xl my-6">Login</h1>
+      <div class="mb-3">
+        <div class="flex items-center border-2 py-2 px-3 rounded-2xl">
+          <i class="fa-solid fa-envelope text-gray-400"></i>
+          <input
+            class="pl-2 outline-none border-none"
+            type="text"
+            formControlName="email"
+            placeholder="Email Address"
+          />
+        </div>
+        <p class="text-red-600 text-[.75rem] italic mt-1" *ngIf="isFieldInvalid('email')">
+          Please enter a valid email!
+        </p>
+      </div>
+
+      <div class="mb-3">
+        <div class="flex items-center border-2 py-2 px-3 rounded-2xl">
+          <i class="fa-solid fa-lock text-gray-400"></i>
+          <input
+            class="pl-2 outline-none border-none"
+            type="password"
+            formControlName="password"
+            placeholder="Password"
+          />
+        </div>
+        <p class="text-red-600 text-[.75rem] italic mt-1" *ngIf="isFieldInvalid('password')">
+          Please enter a valid password!
+        </p>
+      </div>
+      <button
+        type="submit"
+        class="block w-full bg-indigo-600 mt-4 py-2 rounded-2xl text-white font-semibold mb-2"
+      >
+        Login
+      </button>
+      <!-- Already have an account? -->
+      <div class="text-center">
+        <p class="inline-block font-medium text-sm">
+          New User?
+          <a
+            [routerLink]="['/register']"
+            class="font-semibold underline text-blue-500 dark:text-blue-500 align-baseline hover:text-blue-800"
+            ><app-loader *ngIf="isLoading"></app-loader>  Signup</a
+          >
+        </p>
+      </div>
+      <!-- <span class="text-sm ml-2 hover:text-blue-500 cursor-pointer"
+        >Forgot Password ?</span
+      > -->
+    </form>
+  </div>
+
+</app-side-banner>

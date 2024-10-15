@@ -1,0 +1,59 @@
+
+
+
+<div *ngIf="isOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+  <div class="w-full max-w-lg bg-white p-8 mx-auto rounded-md shadow-lg">
+    <h2 class="text-xl font-semibold mb-6 text-[#07074D]">Edit Profile</h2>
+    <form [formGroup]="editProfileForm" (ngSubmit)="onSave()">
+      <div class="mb-5">
+        <label for="fullName" class="block text-base font-medium text-[#07074D] mb-3">
+          Full Name
+        </label>
+        <input
+          type="text"
+          id="firstName"
+          formControlName="fullName"
+          placeholder="Full Name"
+          class="w-full rounded-md border border-[#e0e0e0] bg-white py-2 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
+        />
+        <p class="text-red-600 text-[.75rem] text-left italic"
+            *ngIf="isFieldInvalid('firstName')">Full Name is required.
+        </p>
+      </div>
+      <div class="mb-5">
+        <label for="work" class="block text-base font-medium text-[#07074D] mb-3">
+          Work
+        </label>
+        <input
+          type="text"
+          id="work"
+          formControlName="work"
+          placeholder="work"
+          class="w-full rounded-md border border-[#e0e0e0] bg-white py-2 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
+        />
+        <p class="text-red-600 text-[.75rem] text-left italic"
+            *ngIf="isFieldInvalid('work')">Work is required.
+        </p>
+      </div>
+      <div class="flex justify-end">
+        <button
+          type="button"
+          (click)="closeModal()"
+          class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded mr-2"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="bg-[#6A64F1] hover:bg-[#5a54e0] text-white px-4 py-2 rounded"
+        >
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+

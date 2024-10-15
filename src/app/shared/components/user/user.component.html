@@ -1,0 +1,70 @@
+<div class="bg-gray-200 lg:flex">
+  <nav class="bg-white border-b border-gray-300">
+    <div class="flex justify-between items-center px-9">
+      <!-- Ícono de Menú -->
+      <button id="menu-button" class="lg:hidden">
+        <i class="fas fa-bars text-cyan-500 text-lg"></i>
+      </button>
+      <!-- Logo -->
+      <div class="ml-1">
+        <img
+          src="https://www.emprenderconactitud.com/img/POC%20WCS%20(1).png"
+          alt="logo"
+          class="h-20 w-28"
+        />
+      </div>
+
+      <!-- Ícono de Notificación y Perfil -->
+      <div class="space-x-4">
+        <button>
+          <i class="fas fa-bell text-cyan-500 text-lg"></i>
+        </button>
+
+        <!-- Botón de Perfil -->
+        <button>
+          <i class="fas fa-user text-cyan-500 text-lg"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Barra lateral -->
+  <div
+    id="sidebar"
+    class="lg:block hidden bg-white w-64 h-screen  shadow-xl fixed rounded-none border-none"
+  >
+    <!-- Items -->
+    <div class="p-4 space-y-4">
+      <!-- Logo -->
+      <div class="ml-1 text-[1.8rem] font-bold text-blue-600 mt-6 mb-10">
+        <i class="c"></i>
+        WriteUp <i class="fa-solid fa-feather text-[1.3rem]"></i>
+      </div>
+      <!-- Inicio -->
+      <a
+        *ngFor="let item of menues"
+        [routerLink]="item.path"
+        [routerLinkActive]="'router-link-active'"
+        class="relative px-4 py-3 flex items-center space-x-4 rounded-lg text-gray-500 bg-gradient-to-r hover:from-cyan-600 hover:to-sky-400 hover:text-white hover:shadow-lg transition duration-300 ease-in-out"
+      >
+        <i [classList]="item.icon"></i>
+        <span class="-mr-1 font-medium">{{ item.name }}</span>
+      </a>
+
+      <!-- <a
+        href="#"
+        class="px-4 py-3 flex items-center space-x-4 rounded-md text-gray-500 group"
+      >
+      <i class="fas fa-user"></i>
+        <span>Profile</span>
+      </a> -->
+    </div>
+  </div>
+
+  <div class="lg:w-full lg:ml-20 px-6 py-8 mb-5">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+
+
+<app-footer></app-footer>
