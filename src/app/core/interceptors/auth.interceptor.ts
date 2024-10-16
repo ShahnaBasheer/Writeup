@@ -63,7 +63,7 @@ export const AuthInterceptor: HttpInterceptorFn = (
             }
 
             tokenService.setProperty('userInfo', JSON.stringify(data?.user))
-
+            authservice.setUser(data?.user)
             console.log('auth interceptor triggering', event.body)
 
           }

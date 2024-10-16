@@ -4,6 +4,7 @@ import { AppComponent } from './app/app.component';
 import { mergeApplicationConfig } from '@angular/core';
 import { authConfig } from './app/features/auth/auth.config';
 import { articleConfig } from './app/features/articles/articles.config';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 
 const mergedConfig = mergeApplicationConfig(appConfig, authConfig, articleConfig);

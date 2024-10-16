@@ -11,16 +11,18 @@ import { OtpVerificationComponent } from './features/auth/components/otp-verific
 import { InterestedTopicsComponent } from './features/articles/components/interested-topics/interested-topics.component';
 import { ProfileComponent } from './features/auth/components/profile/profile.component';
 import { AuthGuard } from './core/guards/auth.guard';
+import { EditArticleComponent } from './shared/components/edit-article/edit-article.component';
 
 
 
 export const routes: Routes = [
   { path: '', component: UserComponent, canActivateChild: [ AuthGuard ], children: [
     { path: 'dashboard', component: DashboardComponent },
-    { path: 'details', component: DetailPageComponent},
+    { path: 'details/:articleId', component: DetailPageComponent},
     { path: 'profile', component: ProfileComponent },
     { path: 'myarticles', component: MyarticlespageComponent},
     { path: 'create', component: CreateArticleComponent },
+    { path: 'update/article/:articleId', component: EditArticleComponent },
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   ] },
   { path: 'login', component: LoginComponent, canActivate: [AuthGuard] },

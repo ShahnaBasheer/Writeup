@@ -4,14 +4,14 @@
   <h2
     class="text-3xl font-extrabold text-gray-800 inline-block relative after:absolute after:w-4/6 after:h-1 after:left-0 after:right-0 after:-bottom-4 after:mx-auto after:bg-pink-400 after:rounded-full"
   >
-    Create New Article
+    Edit Article
   </h2>
 </div>
 
 <div class="max-w-3xl mx-auto p-8 bg-white shadow-md rounded-lg mt-4">
   <!-- Form -->
   <form
-    [formGroup]="articleForm"
+    [formGroup]="editArticleForm"
     (ngSubmit)="onSubmit()"
     class="space-y-6"
     enctype="multipart/form-data"
@@ -96,7 +96,7 @@
       <quill-editor
         formControlName="content"
         [modules]="editorConfig"
-        class="h-52 break-words w-full"
+        class="h-52"
       ></quill-editor>
     </div>
 
@@ -133,17 +133,17 @@
 
     <!-- Publish and Cancel Buttons -->
     <div class="flex justify-end mt-6 space-x-3">
-      <button
+      <button (click)="onCancel()"
         type="reset"
         class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition duration-300"
       >
-        Reset
+        Cancel
       </button>
       <button
         type="submit"
         class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300"
       >
-        Publish
+        Edit
       </button>
     </div>
   </form>

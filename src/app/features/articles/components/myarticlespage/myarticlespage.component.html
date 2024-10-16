@@ -8,10 +8,16 @@
 
 <div class="bg-white font-[sans-serif] mb-4 mx-auto rounded-md max-w-4xl">
   <div class="mx-auto p-10">
-    <div
-      class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-16 max-lg:max-w-3xl max-md:max-w-md mx-auto"
+    <div *ngIf="articles.length > 0"
+      class="grid grid-cols-1 md:grid-cols-2 gap-4 max-lg:max-w-3xl max-md:max-w-md mx-auto"
     >
-      <app-myarticle></app-myarticle>
+      <app-myarticle *ngFor="let item of articles; let i = index" [article]="item"
+          (articleDeleted)="onDeleteAlert($event, i)">
+      </app-myarticle>
     </div>
   </div>
 </div>
+
+
+
+<app-delete-alert *ngIf="showDeleteModal" (alertResponse)="onDeleteConfirm($event)"></app-delete-alert>

@@ -1,19 +1,19 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { ArticleService } from '../../services/article.service';
 import { ToastrService } from 'ngx-toastr';
+import { DetailCardComponent } from '../../../../shared/components/detail-card/detail-card.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [],
+  imports: [ DetailCardComponent, CommonModule ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
 export class DashboardComponent {
   articles: any[] = [];
   constructor(
-    private router: Router,
     private articleservice: ArticleService,
     private toastr: ToastrService
   ) {}
@@ -21,7 +21,8 @@ export class DashboardComponent {
   ngOnInit(): void {
     this.articleservice.getDashboard().subscribe({
       next: (res) => {
-        this.articles = [];
+        this.articles = res.data?.articles || [];
+        console.log(this.articles)
       },
       error: (err) => {
         this.toastr.error(
@@ -31,7 +32,5 @@ export class DashboardComponent {
     });
   }
 
-  onSelectDetail() {
-    this.router.navigate(['/details']);
-  }
+
 }

@@ -1,26 +1,37 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { QuillModule } from 'ngx-quill';
-import { isFieldInvalidator } from '../../../../core/validators/forms.validator';
-import { ArticleService } from '../../services/article.service';
 import { ToastrService } from 'ngx-toastr';
+import { isFieldInvalidator } from '../../../core/validators/forms.validator';
+import { Article } from '../../../core/models/article.model';
+import { QuillModule } from 'ngx-quill';
+import { ArticleService } from '../../../features/articles/services/article.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-create-article',
+  selector: 'app-edit-article',
   standalone: true,
-  imports: [ReactiveFormsModule, QuillModule, CommonModule],
-  templateUrl: './create-article.component.html',
-  styleUrl: './create-article.component.css',
+  imports: [CommonModule, ReactiveFormsModule, QuillModule],
+  templateUrl: './edit-article.component.html',
+  styleUrl: './edit-article.component.css',
 })
-export class CreateArticleComponent {
-  articleForm!: FormGroup;
+export class EditArticleComponent {
+  article!: Article;
+  @Input({ required: true }) isOpen: boolean = false;
+  @Input({ required: true }) articleId: string = '';
+  @Output() close = new EventEmitter<void>();
+  @Output() save = new EventEmitter<any>();
+  showOtpModal: boolean = false;
+
+  @Output() profileEmitter = new EventEmitter<Article>();
+
+  editArticleForm!: FormGroup;
+
   imageUrl: string | ArrayBuffer | null = null; // Store the uploaded image URL
   categories = [
     { label: 'Technology', value: 'Technology' },
@@ -59,22 +70,59 @@ export class CreateArticleComponent {
 
   constructor(
     private fb: FormBuilder,
-    private articleservice: ArticleService,
+    private router: Router,
     private toastr: ToastrService,
-    private router: Router
-  ) {}
-
-  ngOnInit(): void {
-    this.articleForm = this.fb.group({
+    private articleservice: ArticleService,
+  ) {
+    this.editArticleForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
-      description: ['', [Validators.required, Validators.minLength(100),Validators.maxLength(400)]],
+      description: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(100),
+          Validators.maxLength(400),
+        ],
+      ],
       category: ['', [Validators.required, Validators.minLength(3)]],
       content: ['', [Validators.required, Validators.minLength(200)]],
       image: [null, [Validators.required, Validators.minLength(1)]],
     });
   }
 
-  // Handle file input change
+  ngOnInit(): void {
+    this.articleservice.getArticleDetail(this.articleId).subscribe({
+      next: (res) => {
+        this.article = res.data?.article;
+        this.imageUrl = this.article.image;
+        this.editArticleForm.patchValue(this.article);
+      },
+      error: (err) => {
+        this.toastr.error(
+          err.error?.message ?? 'Something went wrong. Please try later'
+        );
+      },
+    });
+  }
+
+  isFieldInvalid(fieldName: string): boolean {
+    return isFieldInvalidator(this.editArticleForm, fieldName);
+  }
+
+  closeModal() {
+    this.close.emit();
+  }
+
+  onCancel(){
+    this.router.navigate(['/details', this.articleId], { replaceUrl: true })
+  }
+
+  onSave() {
+    if (this.editArticleForm.invalid) {
+      this.editArticleForm.markAsTouched();
+      return;
+    }
+  }
 
   onFileChange(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -84,38 +132,31 @@ export class CreateArticleComponent {
       const reader = new FileReader();
       reader.onload = () => {
         this.imageUrl = reader.result;
-        this.articleForm.get('image')?.patchValue(file);
+        this.editArticleForm.get('image')?.patchValue(file);
       };
       reader.readAsDataURL(file);
     }
   }
 
-  isFieldInvalid(fieldName: string): boolean {
-    return isFieldInvalidator(this.articleForm, fieldName);
-  }
-
-  onReset() {
-    this.articleForm.reset();
-  }
-
   onSubmit() {
-    const controls = this.articleForm.controls;
-    if (this.articleForm.valid) {
-
+    const controls = this.editArticleForm.controls;
+    if (this.editArticleForm.valid) {
       const formData = new FormData();
       formData.append('title', controls['title']?.value);
       formData.append('category', controls['category']?.value);
       formData.append('content', controls['content']?.value);
       formData.append('description', controls['description']?.value);
+      formData.append('articleId', this.articleId);
 
       const coverpic = controls['image'].value;
-      console.log(coverpic)
-      if (coverpic) formData.append('image', coverpic);
+      if (coverpic instanceof File) {
+        formData.append('image', coverpic); // If a new image is selected
+      }
 
-      this.articleservice.createArticle(formData).subscribe({
+      this.articleservice.editArticle(formData).subscribe({
         next: (res) => {
           this.toastr.success(res?.message);
-          this.router.navigate(['/myarticles']);
+          this.router.navigate(['/details', this.articleId], {replaceUrl: true});
         },
         error: (err) => {
           this.toastr.error(
@@ -124,10 +165,7 @@ export class CreateArticleComponent {
         },
       });
     } else {
-      this.articleForm.markAllAsTouched();
+      this.editArticleForm.markAllAsTouched();
     }
   }
-
-
-
 }

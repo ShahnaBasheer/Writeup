@@ -9,7 +9,6 @@ import { AuthResponse } from '../models/response.model';
 @Injectable({
   providedIn: 'root',
 })
-
 export class AuthService {
   private emailSubject = new BehaviorSubject<string>('');
   email$ = this.emailSubject.asObservable();
@@ -17,34 +16,49 @@ export class AuthService {
   user$ = this.userSubject.asObservable();
 
   constructor(private http: HttpClient, private tokenservice: TokenService) {
-      const storedEmail = this.tokenservice.getToken(environment.us_accessKey) ?? '';
-      if (storedEmail) this.emailSubject.next(storedEmail);
+    const storedEmail =
+      this.tokenservice.getToken(environment.us_accessKey) ?? '';
+    if (storedEmail) this.emailSubject.next(storedEmail);
 
-      const userstring = this.tokenservice.getToken("userInfo") ?? '';
-      if(userstring){
-        const user: User = JSON.parse(userstring);
-        this.userSubject.next(user);
-      }
+    const userstring = this.tokenservice.getToken('userInfo') ?? '';
+    if (userstring) {
+      const user: User = JSON.parse(userstring);
+      this.userSubject.next(user);
+    }
   }
 
-  login(credentials: { email: string, password: string }): Observable<AuthResponse> {
+  login(credentials: {
+    email: string;
+    password: string;
+  }): Observable<AuthResponse> {
     return this.http
       .post<AuthResponse>(`${environment.userUrl}/login`, credentials, {
         withCredentials: true,
       })
       .pipe(
         tap((res: AuthResponse) => {
-          if(res.data?.token && res.data?.user){
-            this.tokenservice.setToken(environment.us_accessKey, res.data?.token);
-            this.tokenservice.setProperty('userInfo', JSON.stringify(res.data?.user));
-            console.log(res, "jkkkkkkkkk")
+          if (res.data?.token && res.data?.user) {
+            this.tokenservice.setToken(
+              environment.us_accessKey,
+              res.data?.token
+            );
+            this.tokenservice.setProperty(
+              'userInfo',
+              JSON.stringify(res.data?.user)
+            );
+            console.log(res, 'jkkkkkkkkk');
             this.userSubject.next(res.data?.user);
           }
         })
       );
   }
 
-  register(userData: { fullName: string, email: string, work: string, password: string }): Observable<any> {
+  register(userData: {
+    fullName: string;
+    email: string;
+    work: string;
+    password: string;
+  }): Observable<any> {
     return this.http
       .post<any>(`${environment.userUrl}/signup`, userData, {
         withCredentials: true,
@@ -62,6 +76,10 @@ export class AuthService {
 
   setEmail(email: string) {
     this.emailSubject.next(email);
+  }
+
+  setUser(user: User) {
+    this.userSubject.next(user);
   }
 
   logout(): Observable<any> {
@@ -83,20 +101,27 @@ export class AuthService {
 
   verifyOTP(email: string, otp: string): Observable<any> {
     const payload = { email, otp };
-    return this.http.post<any>(`${environment.userUrl}/verify-otp`, payload,
-      { withCredentials: true }).pipe(
+    return this.http
+      .post<any>(`${environment.userUrl}/verify-otp`, payload, {
+        withCredentials: true,
+      })
+      .pipe(
         tap((res: any) => {
-          this.tokenservice.removeToken('verificationEmail')
+          this.tokenservice.removeToken('verificationEmail');
         }),
         catchError((error) => {
           throw error;
         })
-    );
+      );
   }
 
   resendOTP(email: string): Observable<any> {
-    return this.http.post<any>(`${environment.userUrl}/resend-otp`, { email }, {
-      withCredentials: true
-    });
+    return this.http.post<any>(
+      `${environment.userUrl}/resend-otp`,
+      { email },
+      {
+        withCredentials: true,
+      }
+    );
   }
 }
