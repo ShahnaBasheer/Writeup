@@ -7,6 +7,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { EditProfileModalComponent } from '../../../../shared/components/edit-profile-modal/edit-profile-modal.component';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -30,7 +31,8 @@ export class ProfileComponent {
   constructor(
     private router: Router,
     private fb: FormBuilder,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private authservice: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -60,20 +62,20 @@ export class ProfileComponent {
   }
 
  loadProfilePage(url: string): void {
-    // this.customerService.getProfilePage().subscribe({
-    //   next: (response) => {
-    //     console.log(response, "res")
-    //     this.profileInfo = response.data?.customerDetail;
-    //     this.emailForm.patchValue({
-    //       email: this.profileInfo.email
-    //     });
-    //     this.isLoading = false;
-    //   },
-    //   error: (error) => {
-    //     console.error('Error loading profile page:', error);
-    //     this.isLoading = false;
-    //   }
-    // });
+    this.authservice.getProfilePage().subscribe({
+      next: (response) => {
+        console.log(response, "res")
+        this.profileInfo = response.data?.profile;
+        this.emailForm.patchValue({
+          email: this.profileInfo.email
+        });
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading profile page:', error);
+        this.isLoading = false;
+      }
+    });
   }
 
 

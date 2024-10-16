@@ -33,30 +33,25 @@
         <ul class="mt-2 text-gray-700">
           <li class="flex border-y py-2">
             <span class="font-bold w-24">Full name:</span>
-            <span class="text-gray-700">Amanda S. Ross</span>
+            <span class="text-gray-700">{{ profileInfo.fullName }}</span>
           </li>
           <li class="flex border-b py-2">
             <span class="font-bold w-24">Email:</span>
-            <span class="text-gray-700">amandarossexample.com</span>
+            <span class="text-gray-700">{{ profileInfo.email }}</span>
           </li>
           <li class="flex border-b py-2">
             <span class="font-bold w-24">Work</span>
-            <span class="text-gray-700">hjehfijdjijiji</span>
+            <span class="text-gray-700">{{ profileInfo.work }}</span>
           </li>
-          <li class="flex border-b py-2">
-            <span class="font-bold w-24">Birthday:</span>
-            <span class="text-gray-700">24 Jul, 1991</span>
+          <li class="flex border-b py-2" *ngIf="profileInfo.interests.length > 0">
+            <span class="font-bold w-24">Interests:</span>
+            <span class="text-gray-700">{{ profileInfo.interests.join(',') }}</span>
           </li>
           <li class="flex border-b py-2">
             <span class="font-bold w-24">Joined:</span>
-            <span class="text-gray-700">10 Jan 2022 (25 days ago)</span>
+            <span class="text-gray-700">{{ profileInfo.createdAt | date: 'longDate' }}</span>
           </li>
 
-
-          <li class="flex border-b py-2">
-            <span class="font-bold w-24">Location:</span>
-            <span class="text-gray-700">New York, US</span>
-          </li>
         </ul>
       </div>
     </div>

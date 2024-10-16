@@ -124,4 +124,13 @@ export class AuthService {
       }
     );
   }
+
+  getProfilePage(): Observable<any>{
+    return this.http.get<any>(
+      `${environment.userUrl}/profile`,
+      {
+        withCredentials: true,
+      }
+    );
+  }
 }
