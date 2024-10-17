@@ -23,7 +23,8 @@ export class ArticleService {
   createArticle(data: any): Observable<any>{
     return this.http.post<any>(`${environment.userUrl}/create/article`, data , {
       withCredentials: true
-    });
+    },
+  );
   }
 
   getMyArticles(): Observable<any>{

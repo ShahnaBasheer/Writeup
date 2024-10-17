@@ -44,6 +44,7 @@ export const AuthInterceptor: HttpInterceptorFn = (
   }
 
   if (token && !isPostRequest) {
+    console.log(path, 'with token', path);
     const modified = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`,
