@@ -3,8 +3,8 @@
 
 export const environment = {
   production: true,
-  baseUrl: 'http://localhost:5000/',
-  userUrl: 'http://localhost:5000/api',
+  baseUrl: 'https://backend.voguish.world/',
+  userUrl: 'https://backend.voguish.world/api',
   us_accessKey: 'us_access',
   verifyemail: 'verificationEmail'
 };
