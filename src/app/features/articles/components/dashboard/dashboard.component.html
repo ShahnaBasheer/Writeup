@@ -1,12 +1,22 @@
-<div
-  class="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-6 mb-4 text-center"
->
-  <h2
-    class="text-3xl font-extrabold text-gray-800 inline-block relative after:absolute after:w-4/6 after:h-1 after:left-0 after:right-0 after:-bottom-4 after:mx-auto after:bg-pink-400 after:rounded-full"
-  >
-    Recent Articles
-  </h2>
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+
+
+<div *ngIf="!isLoading">
+  <div class="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-6 mb-4 text-center">
+    <h2
+      class="text-3xl font-extrabold text-gray-800 inline-block relative after:absolute after:w-4/6 after:h-1 after:left-0 after:right-0 after:-bottom-4 after:mx-auto after:bg-pink-400 after:rounded-full">
+      Recent Articles
+    </h2>
+  </div>
+
+
+
+  <div *ngIf="articles.length === 0"
+    class="max-w-3xl mx-auto bg-white shadow-custom rounded-lg py-10 px-16 cursor-pointer my-3">
+    <p> No Articles so far! </p>
+  </div>
+
+
+  <app-detail-card *ngFor="let item of articles" [article]="item"></app-detail-card>
+
 </div>
-
-
-<app-detail-card *ngFor="let item of articles" [article]="item"></app-detail-card>

@@ -1,23 +1,34 @@
-<div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6 mb-4 text-center">
-  <h2
-    class="text-3xl font-extrabold text-gray-800 inline-block relative after:absolute after:w-4/6 after:h-1 after:left-0 after:right-0 after:-bottom-4 after:mx-auto after:bg-pink-400 after:rounded-full"
-  >
-    My Articles
-  </h2>
-</div>
+<app-page-loader *ngIf="isLoading"></app-page-loader>
 
-<div class="bg-white font-[sans-serif] mb-4 mx-auto rounded-md max-w-4xl">
-  <div class="mx-auto p-10">
-    <div *ngIf="articles.length > 0"
-      class="grid grid-cols-1 md:grid-cols-2 gap-4 max-lg:max-w-3xl max-md:max-w-md mx-auto"
+<div *ngIf="!isLoading">
+  <div
+    class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6 mb-4 text-center"
+  >
+    <h2
+      class="text-3xl font-extrabold text-gray-800 inline-block relative after:absolute after:w-4/6 after:h-1 after:left-0 after:right-0 after:-bottom-4 after:mx-auto after:bg-pink-400 after:rounded-full"
     >
-      <app-myarticle *ngFor="let item of articles; let i = index" [article]="item"
-          (articleDeleted)="onDeleteAlert($event, i)">
-      </app-myarticle>
+      My Articles
+    </h2>
+  </div>
+
+  <div class="bg-white font-[sans-serif] mb-4 mx-auto rounded-md max-w-4xl">
+    <div class="mx-auto p-10">
+      <div
+        *ngIf="articles.length > 0"
+        class="grid grid-cols-1 md:grid-cols-2 gap-4 max-lg:max-w-3xl max-md:max-w-md mx-auto"
+      >
+        <app-myarticle
+          *ngFor="let item of articles; let i = index"
+          [article]="item"
+          (articleDeleted)="onDeleteAlert($event, i)"
+        >
+        </app-myarticle>
+      </div>
     </div>
   </div>
+
+  <app-delete-alert
+    *ngIf="showDeleteModal"
+    (alertResponse)="onDeleteConfirm($event)"
+  ></app-delete-alert>
 </div>
-
-
-
-<app-delete-alert *ngIf="showDeleteModal" (alertResponse)="onDeleteConfirm($event)"></app-delete-alert>

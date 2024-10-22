@@ -1,194 +1,337 @@
-<div
-  class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6 text-center mb-4"
->
-  <h2
-    class="text-3xl font-extrabold text-gray-800 inline-block relative after:absolute after:w-4/6 after:h-1 after:left-0 after:right-0 after:-bottom-4 after:mx-auto after:bg-pink-400 after:rounded-full"
-  >
-    My Profile
-  </h2>
-</div>
+<app-page-loader *ngIf="isLoading"></app-page-loader>
 
-<div class="h-full max-w-4xl mx-auto">
-
+<div *ngIf="!isLoading && profileInfo">
   <div
-    class="my-4 flex flex-col 2xl:flex-row space-y-4 2xl:space-y-0 2xl:space-x-4"
+    class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6 text-center mb-4"
   >
-    <div class="w-full flex flex-col 2xl:w-1/3">
-      <div class="flex-1 bg-white rounded-lg shadow-xl p-8">
-        <div class="flex justify-between items-center">
-          <h4 class="text-xl text-gray-900 font-bold">Personal Info</h4>
-          <div
-          class="flex-1 flex flex-col items-center lg:items-end justify-end px-8 mt-2"
-        >
-          <div class="flex items-center space-x-4 mt-2">
-            <button (click)="toggleEditProfileModal()"
-              class="flex items-center bg-blue-600 hover:bg-blue-700 text-gray-100 px-4 py-2 rounded text-sm space-x-2 transition duration-100"
+    <h2
+      class="text-3xl font-extrabold text-gray-800 inline-block relative after:absolute after:w-4/6 after:h-1 after:left-0 after:right-0 after:-bottom-4 after:mx-auto after:bg-pink-400 after:rounded-full"
+    >
+      My Profile
+    </h2>
+  </div>
+
+  <div class="h-full max-w-4xl mx-auto">
+    <div
+      class="my-4 flex flex-col 2xl:flex-row space-y-4 2xl:space-y-0 2xl:space-x-4"
+    >
+      <div class="w-full flex flex-col 2xl:w-1/3">
+        <div class="flex-1 bg-white rounded-lg shadow-xl p-8">
+          <div class="flex justify-between items-center">
+            <h4 class="text-xl text-gray-900 font-bold">Personal Info</h4>
+            <div
+              class="flex-1 flex gap-3 items-center lg:items-end justify-end px-8 mt-2"
             >
-              <span>Edit Profile</span>
-            </button>
+              <div class="flex items-center space-x-4 mt-2">
+                <button
+                  (click)="toggleEditProfileModal()"
+                  class="flex items-center bg-blue-600 hover:bg-blue-700 text-gray-100 px-4 py-2 rounded text-sm space-x-2 transition duration-100"
+                >
+                  <span>Edit Profile</span>
+                </button>
+              </div>
+              <div class="flex items-center space-x-4 mt-2">
+                <button
+                  (click)="toggleEditMailModal()"
+                  class="flex items-center bg-blue-600 hover:bg-blue-700 text-gray-100 px-4 py-2 rounded text-sm space-x-2 transition duration-100"
+                >
+                  <span>Change Email</span>
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-        </div>
 
-        <ul class="mt-2 text-gray-700">
-          <li class="flex border-y py-2">
-            <span class="font-bold w-24">Full name:</span>
-            <span class="text-gray-700">{{ profileInfo.fullName }}</span>
-          </li>
-          <li class="flex border-b py-2">
-            <span class="font-bold w-24">Email:</span>
-            <span class="text-gray-700">{{ profileInfo.email }}</span>
-          </li>
-          <li class="flex border-b py-2">
-            <span class="font-bold w-24">Work</span>
-            <span class="text-gray-700">{{ profileInfo.work }}</span>
-          </li>
-          <li class="flex border-b py-2" *ngIf="profileInfo.interests.length > 0">
-            <span class="font-bold w-24">Interests:</span>
-            <span class="text-gray-700">{{ profileInfo.interests.join(',') }}</span>
-          </li>
-          <li class="flex border-b py-2">
-            <span class="font-bold w-24">Joined:</span>
-            <span class="text-gray-700">{{ profileInfo.createdAt | date: 'longDate' }}</span>
-          </li>
-
-        </ul>
+          <ul class="mt-2 text-gray-700">
+            <li class="flex border-y py-2">
+              <span class="font-bold w-[100px] text-nowrap">Full name:</span>
+              <span class="text-gray-700">{{ profileInfo.fullName }}</span>
+            </li>
+            <li class="flex border-b py-2">
+              <span class="font-bold w-[100px] text-nowrap">Email:</span>
+              <span class="text-gray-700">{{ profileInfo.email }}</span>
+            </li>
+            <li class="flex border-b py-2">
+              <span class="font-bold w-[100px] text-nowrap">Work:</span>
+              <span class="text-gray-700">{{ profileInfo.work }}</span>
+            </li>
+            <li
+              class="flex border-b py-2"
+              *ngIf="profileInfo.interests.length > 0"
+            >
+              <span class="font-bold w-[100px] text-nowrap">Interests:</span>
+              <span class="text-gray-700">{{
+                profileInfo.interests.join(",")
+              }}</span>
+            </li>
+            <li class="flex border-b py-2">
+              <span class="font-bold w-[100px] text-nowrap">Joined:</span>
+              <span class="text-gray-700">{{
+                profileInfo.createdAt | date : "longDate"
+              }}</span>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
 
-
-     <!-- Password Settings Section -->
-     <div class="bg-white p-3 mt-6 rounded-lg shadow-xl">
-      <div class="flex items-center space-x-2 font-semibold text-gray-900 leading-8">
+      <!-- Password Settings Section -->
+      <div class="bg-white p-3 mt-6 rounded-lg shadow-xl">
+        <div
+          class="flex items-center space-x-2 font-semibold text-gray-900 leading-8"
+        >
           <span class="text-yellow-500">
-              <svg class="h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                  stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M12 11a2 2 0 100-4 2 2 0 000 4zm0 4v7m0-7a7.97 7.97 0 00-5.29-1.97c-.35-.02-.7.02-1.05.08a6.978 6.978 0 00-3.43 2.07A8.007 8.007 0 0112 3c2.67 0 5.11 1.03 6.93 2.7.39.36.74.76 1.05 1.18.26.35.49.73.68 1.14a8.01 8.01 0 00-4.68 7.18z" />
-              </svg>
+            <svg
+              class="h-5"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 11a2 2 0 100-4 2 2 0 000 4zm0 4v7m0-7a7.97 7.97 0 00-5.29-1.97c-.35-.02-.7.02-1.05.08a6.978 6.978 0 00-3.43 2.07A8.007 8.007 0 0112 3c2.67 0 5.11 1.03 6.93 2.7.39.36.74.76 1.05 1.18.26.35.49.73.68 1.14a8.01 8.01 0 00-4.68 7.18z"
+              />
+            </svg>
           </span>
           <span class="tracking-wide">Password Settings</span>
-      </div>
-      <div class="text-gray-700 p-4">
-        <div class="grid gap-4 text-sm">
-          <div class="grid grid-cols-12 gap-6">
-            <button
-              (click)="toggleChangePassword()"
-              class="col-span-6 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-            >
-              Change Password
-            </button>
-            <!-- <button
+        </div>
+        <div class="text-gray-700 p-4">
+          <div class="grid gap-4 text-sm">
+            <div class="grid grid-cols-12 gap-6">
+              <button
+                (click)="toggleChangePassword()"
+                class="col-span-6 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+              >
+                Change Password
+              </button>
+              <!-- <button
               (click)="forgotPassword()"
               class="col-span-6 bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded"
             >
               Forgot Password
             </button> -->
-          </div>
+            </div>
 
-          <!-- Change Password Form -->
-          <div *ngIf="showChangePassword">
-            <form [formGroup]="changePasswordForm" >
-              <div class="grid grid-cols-12 gap-4 mt-4">
-                <div class="col-span-12">
-                  <label class="block text-gray-700 text-sm font-medium">Current Password</label>
-                  <input
-                    type="password"
-                    formControlName="currentPassword"
-                    class="w-full px-2 py-1 border rounded-md text-sm"
-                  />
-                  <div *ngIf="changePasswordForm.get('currentPassword')?.touched && changePasswordForm.get('currentPassword')?.invalid" class="text-red-500 text-xs mt-1">
-                    Current Password is required.
-                  </div>
-                </div>
-                <div class="col-span-12">
-                  <label class="block text-gray-700 text-sm font-medium">New Password</label>
-                  <input
-                    type="password"
-                    formControlName="newPassword"
-                    class="w-full px-2 py-1 border rounded-md text-sm"
-                  />
-                  <div *ngIf="changePasswordForm.get('newPassword')?.touched && changePasswordForm.get('newPassword')?.invalid" class="text-red-500 text-xs mt-1">
-                    New Password is required and must be at least 6 characters long.
-                  </div>
-                </div>
-                <div class="col-span-12">
-                  <label class="block text-gray-700 text-sm font-medium">Confirm New Password</label>
-                  <input
-                    type="password"
-                    formControlName="confirmNewPassword"
-                    class="w-full px-2 py-1 border rounded-md text-sm"
-                  />
-                  <div *ngIf="changePasswordForm.hasError('passwordsMismatch')" class="text-red-500 text-xs mt-1">
-                    New Password and Confirm New Password do not match.
-                  </div>
-                  <div *ngIf="changePasswordForm.get('confirmNewPassword')?.touched && changePasswordForm.get('confirmNewPassword')?.invalid" class="text-red-500 text-xs mt-1">
-                    Confirm New Password is required.
-                  </div>
-                </div>
-              </div>
-              <button (click)="onSubmitPassword()"
-                type="button"
-                class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm"
+            <!-- Change Password Form -->
+            <div *ngIf="showChangePassword">
+              <form
+                [formGroup]="changePasswordForm"
+                (ngSubmit)="onSubmitPassword()"
               >
-                Update Password
-              </button>
-            </form>
-
+                <div class="grid grid-cols-12 gap-4 mt-4">
+                  <div class="col-span-12">
+                    <label class="block text-gray-700 text-sm font-medium"
+                      >Current Password</label
+                    >
+                    <input
+                      type="password"
+                      formControlName="currentPassword"
+                      class="w-full px-2 py-1 border rounded-md text-sm"
+                    />
+                    <div
+                      *ngIf="
+                        changePasswordForm.get('currentPassword')?.touched &&
+                        changePasswordForm.get('currentPassword')?.invalid
+                      "
+                      class="text-red-500 text-xs mt-1"
+                    >
+                      Current Password is required.
+                    </div>
+                  </div>
+                  <div class="col-span-12">
+                    <label class="block text-gray-700 text-sm font-medium"
+                      >New Password</label
+                    >
+                    <input
+                      type="password"
+                      formControlName="newPassword"
+                      class="w-full px-2 py-1 border rounded-md text-sm"
+                    />
+                    <div
+                      *ngIf="
+                        changePasswordForm.get('newPassword')?.touched &&
+                        changePasswordForm.get('newPassword')?.invalid
+                      "
+                      class="text-red-500 text-xs mt-1"
+                    >
+                      New Password is required and must be at least 6 characters
+                      long.
+                    </div>
+                  </div>
+                  <div class="col-span-12">
+                    <label class="block text-gray-700 text-sm font-medium"
+                      >Confirm New Password</label
+                    >
+                    <input
+                      type="password"
+                      formControlName="confirmNewPassword"
+                      class="w-full px-2 py-1 border rounded-md text-sm"
+                    />
+                    <div
+                      *ngIf="changePasswordForm.hasError('passwordsMismatch')"
+                      class="text-red-500 text-xs mt-1"
+                    >
+                      New Password and Confirm New Password do not match.
+                    </div>
+                    <div
+                      *ngIf="
+                        isFieldInvalid(
+                          changePasswordForm,
+                          'confirmNewPassword'
+                        ) && !changePasswordForm.hasError('passwordsMismatch')
+                      "
+                      class="text-red-500 text-xs mt-1"
+                    >
+                      Confirm New Password is required.
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm"
+                >
+                  Update Password
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
+      <!-- End of Password Settings Section -->
+    </div>
 
+    <app-edit-profile-modal
+      *ngIf="profileInfo && showEditProfileModal"
+      [isOpen]="showEditProfileModal"
+      [profileInfo]="profileInfo"
+      (close)="toggleEditProfileModal()"
+      (profileEmitter)="onEditedProfile($event)"
+      (save)="onSaveProfile()"
+    >
+    </app-edit-profile-modal>
+
+    <!-- Modal for OTP verification -->
+    <div
+      *ngIf="showOtpModal"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+    >
+      <div class="w-full max-w-lg bg-white p-8 mx-auto rounded-md shadow-lg">
+        <div class="py-2">
+          <h3 class="font-semibold text-lg py-3">OTP Verification</h3>
+
+          <form [formGroup]="otpForm" (ngSubmit)="verifyOtp()">
+            <div class="mb-4">
+              <label for="otpOld">OTP for {{ profileInfo.email }}</label>
+              <input
+                formControlName="otpOld"
+                type="text"
+                id="otpOld"
+                class="border border-gray-300 px-2 text-sm py-1 w-full"
+              />
+              <!-- Error message -->
+              <p
+                class="text-red-600 text-[.75rem] text-left italic"
+                *ngIf="isFieldInvalid(otpForm, 'otpOld')"
+              >
+                Old OTP is required and must be 6 digits
+              </p>
+            </div>
+
+            <div class="mb-4">
+              <label for="otpNew"
+                >OTP for {{ emailForm.get("email")?.value }}</label
+              >
+              <input
+                formControlName="otpNew"
+                type="text"
+                id="otpNew"
+                class="border border-gray-300 px-2 text-sm py-1 w-full"
+              />
+              <!-- Error message -->
+              <p
+                class="text-red-600 text-[.75rem] text-left italic"
+                *ngIf="isFieldInvalid(otpForm, 'otpNew')"
+              >
+                New OTP is required and must be 6 digits
+              </p>
+            </div>
+
+            <div class="text-right">
+              <button
+                type="submit"
+                class="bg-blue-600 text-white px-4 py-1 me-3"
+              >
+                Verify
+              </button>
+              <button
+                type="button"
+                (click)="closeOtpModal()"
+                class="bg-gray-600 text-white px-4 py-1"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
-  <!-- End of Password Settings Section -->
-</div>
 
+  <div *ngIf="showEmailModal" class="fixed inset-0 z-50 bg-black bg-opacity-50">
+    <div class="w-full max-w-md mx-auto p-6 mt-16">
+      <div class="mt-7 bg-white rounded-xl shadow-lg dark:border-gray-700">
+        <div class="p-4 sm:p-7">
+          <div class="text-center">
+            <h1 class="block text-2xl font-bold text-gray-800">
+              Change Email Address
+            </h1>
+          </div>
 
-
-
-<app-edit-profile-modal
-  [isOpen]="showEditProfileModal"
-  [profileInfo]="profileInfo"
-  (close)="toggleEditProfileModal()"
-  (profileEmitter)="onEditedProfile($event)"
-  (save)="onSaveProfile($event)">
-</app-edit-profile-modal>
-
-
-
-<!-- Modal for OTP verification -->
-<div *ngIf="showOtpModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-  <div class="w-full max-w-lg bg-white p-8 mx-auto rounded-md shadow-lg">
-    <div class="py-2">
-      <h3 class="font-semibold text-lg py-3">OTP Verification</h3>
-
-      <form [formGroup]="otpForm">
-        <div class="mb-4">
-          <label for="otpOld">OTP for {{profileInfo.email}} email</label>
-          <input formControlName="otpOld" type="text" id="otpOld" maxlength="6" minlength="6"
-            class="border border-gray-300 px-2 text-sm py-1 w-full" />
-          <!-- Error message -->
-          <p class="text-red-600 text-[.75rem] text-left italic"
-              *ngIf="isFieldInvalid(otpForm,'otpOld')">Old OTP is required and must be 6 digits
-          </p>
+          <div class="mt-5">
+            <form [formGroup]="emailForm" (ngSubmit)="onChangeEmail()">
+              <div class="grid gap-y-4">
+                <div>
+                  <label for="email" class="block text-sm font-bold ml-1 mb-2"
+                    >New Email address</label
+                  >
+                  <div class="relative">
+                    <input
+                      type="email"
+                      id="email"
+                      formControlName="email"
+                      class="py-3 px-4 block w-full border-2 border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 shadow-sm"
+                      required
+                      aria-describedby="email-error"
+                    />
+                  </div>
+                  <p
+                    *ngIf="isFieldInvalid(emailForm, 'email')"
+                    class="text-xs text-red-600 mt-2"
+                  >
+                    Please include a valid email address
+                  </p>
+                </div>
+                <div class="flex justify-end gap-3">
+                  <button
+                    (click)="onCancelEmailModal()"
+                    type="button"
+                    class="py-2 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-medium bg-red-500 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+                  >
+                    cancel
+                  </button>
+                  <button
+                    type="submit"
+                    class="py-2 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-medium bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+                  >
+                    Reset Email
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
-
-        <div class="mb-4">
-          <label for="otpNew">OTP for {{ emailForm.get('email')?.value }}</label>
-          <input formControlName="otpNew" type="text" id="otpNew" maxlength="6" minlength="6"
-            class="border border-gray-300 px-2 text-sm py-1 w-full" />
-          <!-- Error message -->
-          <p class="text-red-600 text-[.75rem] text-left italic"
-              *ngIf="isFieldInvalid(otpForm, 'otpNew')">New OTP is required and must be 6 digits
-          </p>
-        </div>
-
-        <div class="text-right">
-          <button type="button" (click)="verifyOtp()" [disabled]="otpForm.invalid"
-            class="bg-blue-600 text-white px-4 py-1 me-3">Verify</button>
-          <button type="button" (click)="closeOtpModal()" class="bg-gray-600 text-white px-4 py-1">Cancel</button>
-        </div>
-      </form>
+      </div>
     </div>
   </div>
 </div>

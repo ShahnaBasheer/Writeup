@@ -52,7 +52,7 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       this.isLoading = true;
       this.authservice.login(this.loginForm.value).subscribe({
-        next: (res: any) => {
+        next: (res) => {
           this.isLoading = false;
           this.toastr.success(res.message);
           this.router.navigate(['/dashboard']);

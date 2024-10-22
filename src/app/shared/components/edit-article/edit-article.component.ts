@@ -8,15 +8,21 @@ import {
 } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { isFieldInvalidator } from '../../../core/validators/forms.validator';
-import { Article } from '../../../core/models/article.model';
+import { Article, ArticleFormData } from '../../../core/models/article.model';
 import { QuillModule } from 'ngx-quill';
 import { ArticleService } from '../../../features/articles/services/article.service';
 import { Router } from '@angular/router';
+import { PageLoaderComponent } from '../page-loader/page-loader.component';
 
 @Component({
   selector: 'app-edit-article',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, QuillModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    QuillModule,
+    PageLoaderComponent,
+  ],
   templateUrl: './edit-article.component.html',
   styleUrl: './edit-article.component.css',
 })
@@ -25,8 +31,7 @@ export class EditArticleComponent {
   @Input({ required: true }) isOpen: boolean = false;
   @Input({ required: true }) articleId: string = '';
   @Output() close = new EventEmitter<void>();
-  @Output() save = new EventEmitter<any>();
-  showOtpModal: boolean = false;
+  isLoading: boolean = false;
 
   @Output() profileEmitter = new EventEmitter<Article>();
 
@@ -72,7 +77,7 @@ export class EditArticleComponent {
     private fb: FormBuilder,
     private router: Router,
     private toastr: ToastrService,
-    private articleservice: ArticleService,
+    private articleservice: ArticleService
   ) {
     this.editArticleForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
@@ -91,13 +96,16 @@ export class EditArticleComponent {
   }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.articleservice.getArticleDetail(this.articleId).subscribe({
       next: (res) => {
-        this.article = res.data?.article;
+        this.article = res.data?.article as Article;
         this.imageUrl = this.article.image;
         this.editArticleForm.patchValue(this.article);
+        this.isLoading = false;
       },
       error: (err) => {
+        this.isLoading = false;
         this.toastr.error(
           err.error?.message ?? 'Something went wrong. Please try later'
         );
@@ -113,8 +121,8 @@ export class EditArticleComponent {
     this.close.emit();
   }
 
-  onCancel(){
-    this.router.navigate(['/details', this.articleId], { replaceUrl: true })
+  onCancel() {
+    this.router.navigate(['/details', this.articleId], { replaceUrl: true });
   }
 
   onSave() {
@@ -141,22 +149,16 @@ export class EditArticleComponent {
   onSubmit() {
     const controls = this.editArticleForm.controls;
     if (this.editArticleForm.valid) {
-      const formData = new FormData();
-      formData.append('title', controls['title']?.value);
-      formData.append('category', controls['category']?.value);
-      formData.append('content', controls['content']?.value);
-      formData.append('description', controls['description']?.value);
-      formData.append('articleId', this.articleId);
+      const formValue: ArticleFormData = this.editArticleForm
+        .value as ArticleFormData;
 
-      const coverpic = controls['image'].value;
-      if (coverpic instanceof File) {
-        formData.append('image', coverpic); // If a new image is selected
-      }
-
-      this.articleservice.editArticle(formData).subscribe({
+      formValue.articleId = this.articleId;
+      this.articleservice.editArticle(formValue).subscribe({
         next: (res) => {
           this.toastr.success(res?.message);
-          this.router.navigate(['/details', this.articleId], {replaceUrl: true});
+          this.router.navigate(['/details', this.articleId], {
+            replaceUrl: true,
+          });
         },
         error: (err) => {
           this.toastr.error(

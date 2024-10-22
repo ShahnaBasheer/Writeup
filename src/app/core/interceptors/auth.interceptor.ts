@@ -54,6 +54,7 @@ export const AuthInterceptor: HttpInterceptorFn = (
       tap((event) => {
         if (event instanceof HttpResponse) {
           const data = event.body?.data;
+          console.log(event.body, "njjjjjjjjk")
           if (data && !path.includes('/logout')) {
             let newToken: string = data.token;
 

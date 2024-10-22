@@ -1,6 +1,7 @@
 
 // token.service.ts
 import { Injectable } from '@angular/core';
+import { User } from '../models/user.model';
 
 
 @Injectable({
@@ -26,7 +27,7 @@ export class TokenService {
       return !!token;
     }
 
-    setProperty(name: string, data: any){
+    setProperty(name: string, data: string | User  ){
       const dataString = JSON.stringify(data) ?? '';
       localStorage.setItem(name, dataString);
     }

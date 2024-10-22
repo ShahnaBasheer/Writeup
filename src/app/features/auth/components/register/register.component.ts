@@ -60,11 +60,11 @@ export class RegisterComponent {
         this.isLoading = true;
         this.isEnabled = false;
         this.authservice.register(this.registrationForm.value).subscribe({
-          next: (res: any) => {
+          next: (res) => {
               this.toastr.success(res.message);
               this.router.navigate(['/otp-verification']);
           },
-          error: (error: any) => {
+          error: (error) => {
             this.isLoading = false;
             this.isEnabled = false;
             if (error.status === 409) {

@@ -30,7 +30,7 @@ import { environment } from '../../../../../environments/environment';
 export class OtpVerificationComponent {
   email: string = '';
   otpVerificationForm!: FormGroup;
-  countdownIntervalId!: any;
+  countdownIntervalId!: number;
   countdown!: string;
   isLoading: boolean = false;
   isEnabled: boolean = true;
@@ -102,7 +102,7 @@ export class OtpVerificationComponent {
 
   startCountdown(): void {
     let totalSeconds = 120; // 2 minutes
-    this.countdownIntervalId = setInterval(() => {
+    this.countdownIntervalId = window.setInterval(() => {
       totalSeconds--;
       const minutes = Math.floor(totalSeconds / 60);
       const seconds = totalSeconds % 60;
@@ -119,14 +119,14 @@ export class OtpVerificationComponent {
   onResendOTP(): void {
     this.isTimerEnabled = false;
     this.authservice.resendOTP(this.email).subscribe({
-      next: (res: any) => {
-        this.resendOtpCount = parseInt(res?.data?.remainingLimit);
+      next: (res) => {
+        this.resendOtpCount = res?.data?.remainingLimit;
         clearInterval(this.countdownIntervalId)
         this.isTimerEnabled = true;
         this.startCountdown();
         this.toastr.success(res.message);
       },
-      error: (error: any) => {
+      error: (error) => {
         if (error.status === 409) {
           this.toastr.error("You have already signed up!", 'Failed');
           this.router.navigate(['/login']);

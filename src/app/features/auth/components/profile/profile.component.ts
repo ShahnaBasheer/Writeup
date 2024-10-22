@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { LoaderComponent } from '../../../../shared/components/loader/loader.component';
 import { CommonModule } from '@angular/common';
 import { User } from '../../../../core/models/user.model';
@@ -8,25 +8,27 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { EditProfileModalComponent } from '../../../../shared/components/edit-profile-modal/edit-profile-modal.component';
 import { AuthService } from '../../../../core/services/auth.service';
+import { PageLoaderComponent } from '../../../../shared/components/page-loader/page-loader.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
   imports: [ LoaderComponent, CommonModule,
-      EditProfileModalComponent,ReactiveFormsModule ],
+      EditProfileModalComponent,ReactiveFormsModule, PageLoaderComponent ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
 export class ProfileComponent {
   showChangePassword = false;
   changePasswordForm!: FormGroup;
-  profileInfo!: User;
+  profileInfo: User | null = null;
   showEditProfileModal: boolean = false;
   emailForm!: FormGroup;
   otpForm!: FormGroup;
   isLoading: boolean = true;
-  isEditing: boolean = false;
   showOtpModal = false;
+  showEmailModal = false;
+  @Output() close = new EventEmitter<void>();
 
   constructor(
     private router: Router,
@@ -37,11 +39,11 @@ export class ProfileComponent {
 
   ngOnInit(): void {
     const routePath = this.router.url;
-    this.loadProfilePage(routePath);
+    this.loadProfilePage();
 
     // Initialize the reactive form
     this.changePasswordForm = this.fb.group({
-      currentPassword: ['', [Validators.required]],
+      currentPassword: ['', [Validators.required, Validators.minLength(6)]],
       newPassword: ['', [Validators.required, Validators.minLength(6)]],
       confirmNewPassword: ['', [Validators.required, Validators.minLength(6)]]
     }, {
@@ -61,14 +63,10 @@ export class ProfileComponent {
     });
   }
 
- loadProfilePage(url: string): void {
+ loadProfilePage(): void {
     this.authservice.getProfilePage().subscribe({
       next: (response) => {
-        console.log(response, "res")
-        this.profileInfo = response.data?.profile;
-        this.emailForm.patchValue({
-          email: this.profileInfo.email
-        });
+        this.profileInfo = response.data?.profile as User;
         this.isLoading = false;
       },
       error: (error) => {
@@ -84,18 +82,6 @@ export class ProfileComponent {
   }
 
 
-  // Handle the form submission
-  onSubmitChangePassword(): void {
-    if (this.changePasswordForm.invalid) {
-      this.changePasswordForm.markAllAsTouched();
-      return;
-    }
-
-    const { currentPassword, newPassword } = this.changePasswordForm.value;
-
-  }
-
-  // Custom validator to check if new password and confirm new password match
   passwordsMatchValidator(form: FormGroup) {
     const newPassword = form.get('newPassword')?.value;
     const confirmNewPassword = form.get('confirmNewPassword')?.value;
@@ -104,90 +90,52 @@ export class ProfileComponent {
       : null;
   }
 
-  // Placeholder for forgot password action
-  forgotPassword(): void {
-    // Handle forgot password action here
-    console.log('Forgot Password clicked');
-  }
-
-  // Toggle the visibility of the edit profile modal
   toggleEditProfileModal() {
     this.showEditProfileModal = !this.showEditProfileModal;
   }
 
-  // Handle save profile details
-  onSaveProfile(updatedProfile: any) {
-    console.log('Updated Profile:', updatedProfile);
+  toggleEditMailModal() {
+    this.showEmailModal = !this.showEmailModal;
+    this.emailForm.reset();
+  }
+
+  onSaveProfile() {
     this.toggleEditProfileModal();
   }
 
-  onEmailChange() {
-    this.isEditing = true;
-  }
 
-   // When "Save" button is clicked
-  saveEmail() {
-    console.log(this.emailForm.get('email')?.value);
-    const newEmail = this.emailForm.get('email')?.value;
-
-    if(!this.emailForm.valid){
-      this.emailForm.markAllAsTouched();
-      return;
-    }
-    this.isLoading = true;
-    if (newEmail !== this.profileInfo.email && this.emailForm.valid) {
-      // this.customerService.sendOtpForEmail(newEmail).subscribe({
-      //   next: (res) => {
-      //       console.log(res, "response");
-      //       this.toastr.success('OTP has been sent Succesfully!');
-      //       this.otpForm.patchValue({
-      //         email: newEmail
-      //       });
-      //       this.isLoading = false;
-      //       this.showOtpModal = true;
-      //   },
-      //   error: (err) => {
-      //       console.log(err.error.message, "error in sending OTP");
-      //       this.toastr.error(err.error.message);
-      //       this.isLoading = false;
-      //   }
-      // });
-
-
-    } else {
-      this.isEditing = false;
-    }
-  }
-
-  // When "Cancel" button is clicked
-  cancelEdit() {
-    this.isEditing = false;
-  }
-
-  // Close the OTP modal
   closeOtpModal() {
     this.showOtpModal = false;
   }
 
-  // OTP verification logic (this should integrate with backend API)
+  onEditedProfile(data: User){
+    this.profileInfo = data;
+    this.showEditProfileModal = false;
+  }
+
+  onCancelEmailModal(){
+    this.showEmailModal = false;
+  }
+
   verifyOtp() {
+    console.log("clicked", this.otpForm.value)
     if (this.otpForm.valid) {
       this.isLoading = true;
-      // this.customerService.verifyOTPForEmail(this.otpForm.value).subscribe({
-      //   next: (res) => {
-      //     console.log(res,"jbfhdfjjb");
-      //     this.profileInfo = res.data.customerDetail;
-      //     this.isEditing = false;
-      //     this.showOtpModal = false;
-      //     this.isLoading = false;
-      //     this.toastr.success("Email has been successfully changed!");
-      //   },
-      //   error: (err) => {
-      //     this.isLoading = false;
-      //     console.log(err.error.message,'Error in verify OTP');
-      //     this.toastr.error(err.error.message);
-      //   }
-      // })
+
+      this.authservice.verifyOTPForEmail(this.otpForm.value).subscribe({
+        next: (res) => {
+          console.log(res.data.profile, "bhhghhh")
+          this.profileInfo = res.data?.profile;
+          this.showOtpModal = false;
+          this.isLoading = false;
+          this.toastr.success("Email has been successfully changed!");
+        },
+        error: (err) => {
+          this.isLoading = false;
+          console.log(err.error.message,'Error in verify OTP');
+          this.toastr.error(err.error.message);
+        }
+      })
     } else {
       // Handle error if OTP fields are empty or invalid
       this.otpForm.markAllAsTouched();
@@ -201,24 +149,49 @@ export class ProfileComponent {
   onSubmitPassword(){
     if(this.changePasswordForm.valid){
         this.isLoading = true;
-        // this.customerService.passwordChange(this.changePasswordForm.value).subscribe({
-        //   next: (res) => {
-        //     this.toastr.success("Password has been Successfully Changed");
-        //     this.showChangePassword = false;
-        //     this.isLoading = false;
-        //   },
-        //   error: (err) => {
-        //     console.log(err);
-        //     this.toastr.error(err.error.message);
-        //     this.isLoading = false;
-        //   }
-        // })
+
+        this.authservice.passwordChange(this.changePasswordForm.value).subscribe({
+          next: (res) => {
+            this.toastr.success("Password has been Successfully Changed");
+            this.showChangePassword = false;
+            this.isLoading = false;
+          },
+          error: (err) => {
+            console.log(err);
+            this.toastr.error(err.error?.message ?? "Something went wrong. Please try again.");
+            this.isLoading = false;
+          }
+        })
     } else {
       this.changePasswordForm.markAllAsTouched();
     }
   }
 
-  onEditedProfile(data: User){
-    this.profileInfo = data;
+  onChangeEmail(){
+    const newEmail = this.emailForm.get('email')?.value;
+
+    if(!this.emailForm.valid){
+      this.emailForm.markAllAsTouched();
+      return;
+    }
+
+    if (this.profileInfo?.email !== newEmail && this.emailForm.valid) {
+      this.isLoading = true;
+      this.authservice.sendOtpForEmail(newEmail).subscribe({
+        next: (res) => {
+            this.toastr.success(res?.message);
+            this.otpForm.patchValue({ email : res?.data?.email || newEmail})
+            this.isLoading = false;
+            this.showEmailModal = false;
+            this.showOtpModal = true;
+        },
+        error: (err) => {
+            this.toastr.error(err.error?.message || 'Something went wrong!');
+            this.isLoading = false;
+        }
+      });
+    } else {
+      this.emailForm.markAllAsTouched();
+    }
   }
 }

@@ -46,7 +46,6 @@ export class AuthService {
               'userInfo',
               JSON.stringify(res.data?.user)
             );
-            console.log(res, 'jkkkkkkkkk');
             this.userSubject.next(res.data?.user);
           }
         })
@@ -58,13 +57,13 @@ export class AuthService {
     email: string;
     work: string;
     password: string;
-  }): Observable<any> {
+  }): Observable<AuthResponse> {
     return this.http
-      .post<any>(`${environment.userUrl}/signup`, userData, {
+      .post<AuthResponse>(`${environment.userUrl}/signup`, userData, {
         withCredentials: true,
       })
       .pipe(
-        tap((res: any) => {
+        tap((res: AuthResponse) => {
           const email = res?.data?.email;
           if (email) {
             this.tokenservice.setToken('verificationEmail', email);
@@ -82,13 +81,13 @@ export class AuthService {
     this.userSubject.next(user);
   }
 
-  logout(): Observable<any> {
+  logout(): Observable<AuthResponse> {
     return this.http
-      .get<any>(`${environment.userUrl}/logout`, {
+      .post<AuthResponse>(`${environment.userUrl}/logout`,{} ,{
         withCredentials: true,
       })
       .pipe(
-        tap((res: any) => {
+        tap((res: AuthResponse) => {
           this.tokenservice.removeToken(environment.us_accessKey);
           this.userSubject.next(null);
         })
@@ -99,14 +98,14 @@ export class AuthService {
     return !!this.tokenservice.getToken(environment.us_accessKey);
   }
 
-  verifyOTP(email: string, otp: string): Observable<any> {
+  verifyOTP(email: string, otp: string): Observable<AuthResponse> {
     const payload = { email, otp };
     return this.http
-      .post<any>(`${environment.userUrl}/verify-otp`, payload, {
+      .post<AuthResponse>(`${environment.userUrl}/verify-otp`, payload, {
         withCredentials: true,
       })
       .pipe(
-        tap((res: any) => {
+        tap((res) => {
           this.tokenservice.removeToken('verificationEmail');
         }),
         catchError((error) => {
@@ -115,8 +114,8 @@ export class AuthService {
       );
   }
 
-  resendOTP(email: string): Observable<any> {
-    return this.http.post<any>(
+  resendOTP(email: string): Observable<{ data: { email: string, remainingLimit: number }, message: string }> {
+    return this.http.post<{ data: { email: string, remainingLimit: number }, message: string }>(
       `${environment.userUrl}/resend-otp`,
       { email },
       {
@@ -125,9 +124,45 @@ export class AuthService {
     );
   }
 
-  getProfilePage(): Observable<any>{
-    return this.http.get<any>(
-      `${environment.userUrl}/profile`,
+  getProfilePage(): Observable<AuthResponse> {
+    return this.http.get<AuthResponse>(`${environment.userUrl}/profile`, {
+      withCredentials: true,
+    });
+  }
+
+  editProfile(data: Partial<User>): Observable<AuthResponse> {
+    return this.http.put<AuthResponse>(`${environment.userUrl}/profile`, data, {
+      withCredentials: true,
+    });
+  }
+
+  passwordChange(data: {
+    currentPassword: string;
+    newPassword: string;
+  }): Observable<{ data: { user: User }, message: string }> {
+    return this.http.patch<{ data: { user: User }, message: string }>(
+      `${environment.userUrl}/profile/change-password`,
+      data,
+      {
+        withCredentials: true,
+      }
+    );
+  }
+
+  sendOtpForEmail(email: string): Observable<{ data: { profile: User, user: User, email: string }, message: string }> {
+    return this.http.patch<{ data: { profile: User, user: User, email: string }, message: string }>(
+      `${environment.userUrl}/profile/change-email`,
+      { email },
+      {
+        withCredentials: true,
+      }
+    );
+  }
+
+  verifyOTPForEmail(data: { oldOtp: string, newOTP: string }): Observable<{ data: { profile: User, user: User }, message: string }>{
+    return this.http.patch<{ data: { profile: User, user: User }, message: string }>(
+      `${environment.userUrl}/profile/verify-otp`,
+      data,
       {
         withCredentials: true,
       }

@@ -27,7 +27,7 @@ export class UserComponent {
     private toastr: ToastrService
   ) {}
 
-  onMenuClick(menu: any) {
+  onMenuClick(menu: { name: string, icon: string, path: string },) {
     if (menu.path === '/logout') {
       this.authservice.logout().subscribe({
         next: (res) => {

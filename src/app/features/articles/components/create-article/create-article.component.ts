@@ -11,16 +11,27 @@ import { isFieldInvalidator } from '../../../../core/validators/forms.validator'
 import { ArticleService } from '../../services/article.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import {
+  Article,
+  ArticleFormData,
+} from '../../../../core/models/article.model';
+import { PageLoaderComponent } from '../../../../shared/components/page-loader/page-loader.component';
 
 @Component({
   selector: 'app-create-article',
   standalone: true,
-  imports: [ReactiveFormsModule, QuillModule, CommonModule],
+  imports: [
+    ReactiveFormsModule,
+    QuillModule,
+    CommonModule,
+    PageLoaderComponent,
+  ],
   templateUrl: './create-article.component.html',
   styleUrl: './create-article.component.css',
 })
 export class CreateArticleComponent {
   articleForm!: FormGroup;
+  isLoading: boolean = false;
   imageUrl: string | ArrayBuffer | null = null; // Store the uploaded image URL
   categories = [
     { label: 'Technology', value: 'Technology' },
@@ -67,7 +78,14 @@ export class CreateArticleComponent {
   ngOnInit(): void {
     this.articleForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
-      description: ['', [Validators.required, Validators.minLength(100),Validators.maxLength(400)]],
+      description: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(100),
+          Validators.maxLength(400),
+        ],
+      ],
       category: ['', [Validators.required, Validators.minLength(3)]],
       content: ['', [Validators.required, Validators.minLength(200)]],
       image: [null, [Validators.required, Validators.minLength(1)]],
@@ -101,23 +119,19 @@ export class CreateArticleComponent {
   onSubmit() {
     const controls = this.articleForm.controls;
     if (this.articleForm.valid) {
+      this.isLoading = true;
+      // Cast the form value as a Partial<User> since not all fields might be sent
+      const formValue: ArticleFormData = this.articleForm
+        .value as ArticleFormData;
 
-      const formData = new FormData();
-      formData.append('title', controls['title']?.value);
-      formData.append('category', controls['category']?.value);
-      formData.append('content', controls['content']?.value);
-      formData.append('description', controls['description']?.value);
-
-      const coverpic = controls['image'].value;
-      console.log(coverpic)
-      if (coverpic) formData.append('image', coverpic);
-
-      this.articleservice.createArticle(formData).subscribe({
+      this.articleservice.createArticle(formValue).subscribe({
         next: (res) => {
+          this.isLoading = false;
           this.toastr.success(res?.message);
           this.router.navigate(['/myarticles']);
         },
         error: (err) => {
+          this.isLoading = false;
           this.toastr.error(
             err.error?.message ?? 'Something went wrong. Please try later!'
           );
@@ -127,7 +141,4 @@ export class CreateArticleComponent {
       this.articleForm.markAllAsTouched();
     }
   }
-
-
-
 }

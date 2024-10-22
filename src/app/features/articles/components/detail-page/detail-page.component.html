@@ -1,4 +1,6 @@
-<div class="flex justify-between px-4 mx-auto max-w-screen-lg" *ngIf="article">
+<app-page-loader *ngIf="isLoading"></app-page-loader>
+
+<div class="flex justify-between px-4 mx-auto max-w-screen-lg" *ngIf="!isLoading && article">
   <article
     class="mx-auto w-full format bg-white format-sm shadow-custom p-10 sm:format-base lg:format-lg format-blue dark:format-invert"
   >
@@ -40,7 +42,7 @@
       </address>
       <div class="mb-4 lg:mb-6">
         <h1
-          class="text-2xl font-extrabold leading-tight text-gray-900 lg:text-4xl"
+          class="text-xl font-extrabold leading-tight text-gray-900 lg:text-3xl"
         >
           {{ article.title }}
         </h1>

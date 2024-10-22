@@ -5,12 +5,14 @@ import { ArticleService } from '../../services/article.service';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
 import { DeleteAlertComponent } from '../../../../shared/components/delete-alert/delete-alert.component';
+import { PageLoaderComponent } from '../../../../shared/components/page-loader/page-loader.component';
 
 
 @Component({
   selector: 'app-myarticlespage',
   standalone: true,
-  imports: [ MyarticleComponent, CommonModule, DeleteAlertComponent],
+  imports: [ MyarticleComponent, CommonModule,
+    DeleteAlertComponent, PageLoaderComponent],
   templateUrl: './myarticlespage.component.html',
   styleUrl: './myarticlespage.component.css',
 })
@@ -18,6 +20,7 @@ export class MyarticlespageComponent {
   articles: Article[] = [];
   showDeleteModal: boolean = false;
   deleteIndex: number = -1;
+  isLoading: boolean = false;
 
 
   constructor(
@@ -26,11 +29,14 @@ export class MyarticlespageComponent {
   ) {}
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.articleservice.getMyArticles().subscribe({
       next: (res) => {
         this.articles = res?.data?.articles;
+        this.isLoading = false;
       },
       error: (err) => {
+        this.isLoading = false;
         this.toastr.error(
           err.error?.message ?? 'Something went wrong! Try again Later'
         );
