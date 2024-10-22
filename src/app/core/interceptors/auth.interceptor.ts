@@ -44,7 +44,7 @@ export const AuthInterceptor: HttpInterceptorFn = (
   }
 
   if (token && !isPostRequest) {
-    console.log(path, 'with token', path);
+    console.log(path, 'with token');
     const modified = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`,
@@ -54,7 +54,6 @@ export const AuthInterceptor: HttpInterceptorFn = (
       tap((event) => {
         if (event instanceof HttpResponse) {
           const data = event.body?.data;
-          console.log(event.body, "njjjjjjjjk")
           if (data && !path.includes('/logout')) {
             let newToken: string = data.token;
 
@@ -66,8 +65,6 @@ export const AuthInterceptor: HttpInterceptorFn = (
 
             tokenService.setProperty('userInfo', JSON.stringify(data?.user))
             authservice.setUser(data?.user)
-            console.log('auth interceptor triggering', event.body)
-
           }
         }
       })

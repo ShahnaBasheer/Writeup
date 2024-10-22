@@ -20,6 +20,7 @@ export class UserComponent {
     { name: 'Create', icon: 'fa-solid fa-circle-plus', path: '/create' },
     { name: 'Logout', icon: 'fas fa-sign-out-alt', path: '/logout' },
   ];
+  isSidebarOpen: boolean = false;
 
   constructor(
     private authservice: AuthService,
@@ -43,5 +44,9 @@ export class UserComponent {
     } else {
       this.router.navigate([menu.path]); // Navigate to the selected path
     }
+  }
+
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
   }
 }

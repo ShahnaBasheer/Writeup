@@ -149,18 +149,21 @@ export class EditArticleComponent {
   onSubmit() {
     const controls = this.editArticleForm.controls;
     if (this.editArticleForm.valid) {
+      this.isLoading = true;
       const formValue: ArticleFormData = this.editArticleForm
         .value as ArticleFormData;
 
       formValue.articleId = this.articleId;
       this.articleservice.editArticle(formValue).subscribe({
         next: (res) => {
+          this.isLoading = false;
           this.toastr.success(res?.message);
           this.router.navigate(['/details', this.articleId], {
             replaceUrl: true,
           });
         },
         error: (err) => {
+          this.isLoading = false;
           this.toastr.error(
             err.error?.message ?? 'Something went wrong. Please try later!'
           );

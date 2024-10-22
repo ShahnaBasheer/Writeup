@@ -47,7 +47,6 @@ export class MyarticlespageComponent {
   onDeleteConfirm(isDeleted: boolean) {
     if (isDeleted) {
       const article = this.articles[this.deleteIndex];
-      console.log('Article was successfully deleted.', article?._id);
       this.deleteArticle(article?._id || '');
     } else {
       console.log('Cancel to delete the article.');

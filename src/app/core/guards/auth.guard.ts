@@ -30,7 +30,6 @@ export const AuthGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
       // Special case for OTP verification page
       if (url === '/otp-verification') {
         const emailExist = jwtTokenService.getToken('verificationEmail');
-        console.log(emailExist)
         if (!emailExist) {
           return router.createUrlTree(['/login']);
         }

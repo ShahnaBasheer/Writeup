@@ -64,7 +64,7 @@ export class ArticleService {
     }
     return this.http.patch<ArticleResponse>(
       `${environment.userUrl}/article`,
-      data,
+      formData,
       {
         withCredentials: true,
       }

@@ -4,7 +4,6 @@ import { ArticleService } from '../../services/article.service';
 import { ToastrService } from 'ngx-toastr';
 import { Article } from '../../../../core/models/article.model';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../../../core/services/auth.service';
 import { EditArticleComponent } from '../../../../shared/components/edit-article/edit-article.component';
 import { DeleteAlertComponent } from '../../../../shared/components/delete-alert/delete-alert.component';
 import { PageLoaderComponent } from '../../../../shared/components/page-loader/page-loader.component';
@@ -20,7 +19,6 @@ import { PageLoaderComponent } from '../../../../shared/components/page-loader/p
 export class DetailPageComponent {
   @Input() articleId!: string;
   isEditable: boolean = false;
-  userId: string = '';
   isLoading: boolean = false;
   article!: Article;
   showDeleteModal: boolean = false;
@@ -29,14 +27,9 @@ export class DetailPageComponent {
     private router: Router,
     private articleservice: ArticleService,
     private toastr: ToastrService,
-    private authservice: AuthService
   ) {}
 
   ngOnInit(): void {
-    const author = this.authservice.user$.subscribe((user) => {
-      this.userId = user?._id || '';
-    });
-
     if (this.articleId) {
       this.loadArticleDetails(this.articleId);
     }
@@ -47,7 +40,7 @@ export class DetailPageComponent {
       next: (res) => {
         this.article = res.data?.article as Article;
         this.isLoading = false;
-        if (this.userId === this.article.author._id) {
+        if (res?.data?.user?.id === this.article.author._id) {
           this.isEditable = true;
         }
       },
